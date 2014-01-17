@@ -2,14 +2,14 @@
 "version":"1.0.0-SNAPSHOT",
 "connection":
 	{
-		"address":"yourserver.net",
+		"address":"yourserver.com",
 		"port":8080
 	},
 "authentication":
 	{
 		"type":"default",
 		"login_script":"auth/XenForoAuth.php",
-		"forum_login_url":"http://yourforum.net/login"
+		"forum_login_url":"http://yourserver.com/login"
 	},
 "locale":
 	{

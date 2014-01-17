@@ -12,7 +12,6 @@ var socket;
 var message;
 var currentPage;
 var selectedSlot;
-var loggedIn = false;
 // Initialize
 $(function () {
 	// Add .format function to String
@@ -79,17 +78,6 @@ $(function () {
 		if (prot) {
 			console.log("Loading complete!");
 			// Register our events
-			$("#market-login").click(function(e) {
-				e.preventDefault();
-				var username = $("#market-login-user").val();
-				var password = $("#market-login-pass").val();
-				if ((username != null && username.length >= 3)
-						&& (password != null && password.length >= 3)) {
-					viewer.name = username;
-					viewer.password = password;
-					login();
-				}
-			});
 			$("#browse-search").click(function (e) {
 				e.preventDefault();
 				var search = $("#browse-search-input").val();
@@ -152,13 +140,6 @@ function CreateRequest(id, price, amount) {
 	this.amount = amount;
 }
 
-function login() {
-	$("#market-login").addClass('hidden');
-	$("#login-loading").removeClass('hidden');
-	request.req = protocol.REQUEST_LOGIN;
-	socket.send(JSON.stringify(request));
-}
-
 function connect() {
 	console.log("Connecting to server...");
 	socket = new WebSocket("ws://" + settings.connection.address + ":" + settings.connection.port);
@@ -169,10 +150,11 @@ function connect() {
 		});
 		if (settings.authentication.type == "default") {
 			if (viewer.name.length > 3 && viewer.password.length > 3) {
-				login();
+				request.req = protocol.REQUEST_LOGIN;
+				socket.send(JSON.stringify(request));
 			}
 			$("#login").removeClass("hidden");
-			info(locale.accessing_the_market);
+			info(settings.locale.accessing_the_market);
 		} else {
 			$.ajax({
 				url: settings.authentication.login_script,
@@ -180,7 +162,8 @@ function connect() {
 				success: function (response) {
 					viewer.name = response.name;
 					viewer.password = response.password;
-					login();
+					request.req = protocol.REQUEST_LOGIN;
+					socket.send(JSON.stringify(request));
 				},
 				error: function (request, status, er) {
 					warning(locale.please_log_in.format(settings.authentication.forum_login_url));
@@ -199,10 +182,6 @@ function connect() {
 				$("#create-message").html(locale.response_codes[message.data]);
 				return;
 			}
-			if (!loggedIn) {
-				$("#market-login").removeClass('hidden');
-				$("#login-loading").addClass('hidden');
-			}
 			warning(locale.response_codes[message.data]);
 			return;
 		}
@@ -214,7 +193,6 @@ function connect() {
 			if (message.data = 4) {
 				// login
 				success(locale.welcome.format(viewer.name));
-				loggedIn = true;
 				$("#login").addClass("hidden");
 				$("#user").toggleClass("hidden");
 				$("#MarketTabs").toggleClass("hidden");
@@ -231,6 +209,17 @@ function connect() {
 					initializeSelection();
 				} else {
 					$("#listings-container").html("<div style='margin-left: auto; margin-right: auto; font-weight: bold; text-align: center;'>" + locale.there_are_no_listings + "</div>");
+					$("#browse-page-container").pagination({
+						items: 0,
+						itemsOnPage: viewer.pageSize,
+						currentPage: viewer.page,
+						hrefText: null,
+						cssStyle: "pagination",
+						onPageClick: function (pageNumber, event) {
+							viewer.page = pageNumber;
+							sendRequest(2, null);
+						}
+					});
 				}
 			} else if (message.data.type == 1) {
 				// selling
@@ -239,6 +228,17 @@ function connect() {
 					initializeSelection();
 				} else {
 					$("#listings-selling-container").html("<div style='margin-left: auto; margin-right: auto; font-weight: bold; text-align: center;'>" + locale.there_are_no_listings + "</div>");
+					$("#browse-page-container").pagination({
+						items: 0,
+						itemsOnPage: viewer.pageSize,
+						currentPage: viewer.page,
+						hrefText: null,
+						cssStyle: "pagination",
+						onPageClick: function (pageNumber, event) {
+							viewer.page = pageNumber;
+							sendRequest(2, null);
+						}
+					});
 				}
 			} else if (message.data.type == 2) {
 				// mail
@@ -247,6 +247,17 @@ function connect() {
 					initializeSelection();
 				} else {
 					$("#mail-container").html("<div style='margin-left: auto; margin-right: auto; font-weight: bold; text-align: center;'>" + locale.there_is_no_mail + "</div>");
+					$("#browse-page-container").pagination({
+						items: 0,
+						itemsOnPage: viewer.pageSize,
+						currentPage: viewer.page,
+						hrefText: null,
+						cssStyle: "pagination",
+						onPageClick: function (pageNumber, event) {
+							viewer.page = pageNumber;
+							sendRequest(2, null);
+						}
+					});
 				}
 			} else if (message.data.type == 3) {
 				// create
@@ -258,6 +269,17 @@ function connect() {
 					initializeSelection();
 				} else {
 					$("#listings-create-container").html("<div style='margin-left: auto; margin-right: auto; font-weight: bold; text-align: center;'>" + locale.your_inventory_is_empty + "</div>");
+					$("#browse-page-container").pagination({
+						items: 0,
+						itemsOnPage: viewer.pageSize,
+						currentPage: viewer.page,
+						hrefText: null,
+						cssStyle: "pagination",
+						onPageClick: function (pageNumber, event) {
+							viewer.page = pageNumber;
+							sendRequest(2, null);
+						}
+					});
 				}
 			} else if (message.data.type == 4) {
 				// create (mail)
@@ -270,6 +292,17 @@ function connect() {
 					initializeSelection();
 				} else {
 					$("#listings-create-mail-container").html("<div style='margin-left: auto; margin-right: auto; font-weight: bold; text-align: center;'>" + locale.there_is_no_mail + "</div>");
+					$("#browse-page-container").pagination({
+						items: 0,
+						itemsOnPage: viewer.pageSize,
+						currentPage: viewer.page,
+						hrefText: null,
+						cssStyle: "pagination",
+						onPageClick: function (pageNumber, event) {
+							viewer.page = pageNumber;
+							sendRequest(2, null);
+						}
+					});
 				}
 			}
 			break;
@@ -620,7 +653,7 @@ function buildListingButtons(listing) {
 }
 
 function stripColors(string) {
-	return string.replace(/ï¿½[0-9A-FK-OR]/gi, '');
+	return string.replace(/§[0-9A-FK-OR]/gi, '');
 }
 
 function buy(id) {
@@ -699,6 +732,9 @@ function buildListingToolTip(listing, itemName) {
 				html += '<div style="color: #3f3ffe;">+' + attr[i].map.Amount.data + ' ' + attr[i].map.AttributeName.data + '</div>';
 			}
 		}
+	}
+	if (listing.siblingCount > 0) {
+		html += '<div style="font-style: italic;">' + listing.siblingCount + ' more in this listing</div>';
 	}
 	if (listing.isTool) {
 		if (item.damage != null) {

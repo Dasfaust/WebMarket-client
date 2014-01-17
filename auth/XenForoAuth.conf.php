@@ -4,9 +4,9 @@ $market_server = "localhost";
 // Port to your Market server
 $market_port = 8080;
 // The full path to the root directory of your XenForo installation
-$xf_root = "/usr/share/nginx/html";
+$xf_root = "/path/to/XenForo";
 // Only change this if you've changed your cookie prefix in XF's config
-$cookie_prefix = "fs";
+$cookie_prefix = "xf";
 // Whether or not to use a profile field to get a user's IGN
 $custom_fields = true;
 // Your Minecraft field ID

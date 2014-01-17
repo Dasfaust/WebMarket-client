@@ -13,7 +13,7 @@
   <body>
 	<nav style="border-radius: 0;" class="navbar navbar-default" role="navigation">
 	  <div class="navbar-header">
-		<a class="navbar-brand" style="line-height: 34px;"><span style="position: relative; top: 5px; font-size: 17pt; color: #428bca;" class="glyphicon glyphicon-globe"></span> GlobalMarket</a>
+		<a class="navbar-brand" style="line-height: 34px;"><span style="position: relative; top: 5px; font-size: 17pt; color: #428bca;" class="glyphicon glyphicon-globe"></span> Market</a>
 	  </div>
 	  <ul class="nav navbar-nav Tab" data="MarketTabs">
 		  <li data-market-view="0"><a style="cursor: pointer;">Browse <span id="browse-number" class="badge">0</span></a></li>
@@ -21,18 +21,13 @@
 		</ul>
 		<div class="navbar-right navbar-form">
 			<form id="login" role="login" class="hidden">
-				<div class="form-group">
-					<input id="market-login-user" type="text" class="form-control" placeholder="Username">
-				</div>
-				<div class="form-group">
-					<input id="market-login-pass" type="password" class="form-control" placeholder="Password">
-				</div>
-				<div class="form-group">
-					<button id="market-login" class="btn btn-success">Sign In</button>
-					<div id="login-loading" class="hidden progress progress-striped active loadingBar" style="width: 70px;">
-					  <div class="progress-bar progress-bar-success" role="progressbar"></div>
-					</div>
-				</div>
+			  <div class="form-group">
+				<input type="text" class="form-control" placeholder="Username">
+			  </div>
+			  <div class="form-group">
+				<input type="password" class="form-control" placeholder="Password">
+			  </div>
+			  <button class="btn btn-success">Sign In</button>
 			</form>
 			<div id="user" class="hidden">
 				<div id="balance"></div>
