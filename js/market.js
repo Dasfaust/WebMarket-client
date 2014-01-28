@@ -154,7 +154,7 @@ function connect() {
 				socket.send(JSON.stringify(request));
 			}
 			$("#login").removeClass("hidden");
-			info(settings.locale.accessing_the_market);
+			info(locale.accessing_the_market);
 		} else {
 			$.ajax({
 				url: settings.authentication.login_script,
@@ -653,7 +653,7 @@ function buildListingButtons(listing) {
 }
 
 function stripColors(string) {
-	return string.replace(/§[0-9A-FK-OR]/gi, '');
+	return string.replace(/ï¿½[0-9A-FK-OR]/gi, '');
 }
 
 function buy(id) {
